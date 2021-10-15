@@ -20,6 +20,10 @@
     auxiliary/scanner/ftp/ftp_login
     auxiliary/scanner/ftp/ftp_version
     auxiliary/scanner/ftp/konica_ftp_traversal
+  
+  ## port 23
+  ### Nmap commands
+    nmap -n -sV -Pn --script "*telnet* and safe" -p 23 <ip>
  
 ## port 25
 ### nmap command
@@ -103,7 +107,7 @@ Enumeration commands for SNMP service;
     1.3.6.1.2.1.25.4.2.1.4 Processes Path
     1.3.6.1.2.1.25.2.3.1.4 Storage Units
     1.3.6.1.2.1.25.6.3.1.2 Software Name
-    1.3.6.1.4.1.77.1.2.25 User Accounts
+    1.3.6.1.4.1.77.1.2.25 ote configuration of the HP Jetdirect device when there are no other configuration methods or it can be used to check the current configurationUser Accounts
     1.3.6.1.2.1.6.13.1.3 TCP Local Ports
 ## Port 3306
 Enumeration commands for MySQL service;
