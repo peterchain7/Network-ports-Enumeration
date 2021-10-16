@@ -1,5 +1,12 @@
 # Service-security-Testing
-## port 22
+
+# Ge
+## port General scanning
+### NMAP 
+all ports UDP and TCP
+
+    sudo masscan 147.182.194.236 -p0-65535,U:0-65535
+    
 ### nmap commands
     nmap -p 22 -n -v -sV -Pn --script ssh-auth-methods --script-args ssh.user=root 192.168.1.10
     nmap -p 22 -n -v -sV -Pn --script ssh-hostkey 192.168.1.10 
@@ -26,7 +33,7 @@
     nmap -n -sV -Pn --script "*telnet* and safe" -p 23 <ip>
    ###  Getting telnet passwd
     snmpget -v 1 -c public 192.168.2.46 .1.3.6.1.4.1.11.2.3.9.1.1.13.0
-   ####  telnet commads
+   ####  port 23 telnet commads
      use ? for help
    #####  system command 
      > exec id
@@ -81,6 +88,12 @@ Enumeration commands for Microsoft SMB service;
     smbclient \\192.168.1.10\ipc$ -U administrator
     smbclient //192.168.1.10/ipc$ -U administrator
     smbclient //192.168.1.10/admin$ -U administrator
+    
+ ### Accessing the SAMBA ervices
+ *Entering with smbclient in samba shares without passwd
+ *ITDEPT name of share
+                
+    smbclient --no-pass //192.168.236.11/ITDEPT
    
  
 ### Metasploit Modules for Microsoft SMB service;
