@@ -1,7 +1,7 @@
 # Service-security-Testing
 
-# Ge
-## port General scanning
+
+## General Port scanning
 ### NMAP 
 all ports UDP and TCP
 
