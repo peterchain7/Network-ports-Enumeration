@@ -1,9 +1,9 @@
 # Service-security-Testing
 
 
-## General Port scanning
-### NMAP 
-all ports UDP and TCP
+
+### NMAP General Port scanning
+*all ports, UDP and TCP
 
     sudo masscan 147.182.194.236 -p0-65535,U:0-65535
     
@@ -11,6 +11,7 @@ all ports UDP and TCP
     nmap -p 22 -n -v -sV -Pn --script ssh-auth-methods --script-args ssh.user=root 192.168.1.10
     nmap -p 22 -n -v -sV -Pn --script ssh-hostkey 192.168.1.10 
     nmap -p 22 -n -v -sV -Pn --script ssh-brute --script-args userdb=user_list.txt,passdb=password_list.txt 192.168.1.10
+    
 ### Metasploit Modules for SSH service
     auxiliary/scanner/ssh/fortinet_backdoor
     auxiliary/scanner/ssh/juniper_backdoor
@@ -19,6 +20,7 @@ all ports UDP and TCP
     auxiliary/scanner/ssh/ssh_login
     auxiliary/scanner/ssh/ssh_login_pubkey
     auxiliary/scanner/ssh/ssh_version
+    
 ## port 21 
 ### nmap commands
     nmap --script=ftp-proftpd-backdoor,ftp-vsftpd-backdoor,ftp-anon,ftp-libopie,,ftp-vuln-cve2010-4221,tftp-enum -p 21 -n -v -sV -Pn 192.168.1.10
@@ -61,6 +63,7 @@ all ports UDP and TCP
     medusa -h 192.168.1.10 -u admin -P  wordlist.txt -M http -m DIR:/admin -T 10
     wfuzz -u http://10.13.37.11:5000/FUZZ -w /usr/share/wordlists/dirbuster/directory-list-2.3-medium.txt --hc 404
     nmap -p 80 -n -v -sV -Pn --script http-backup-finder,http-config-backup,http-errors,http-headers,http-iis-webdav-vuln,http-internal-ip-disclosure,http-   methods,http-php-version,http-qnap-nas-info,http-robots.txt,http-shellshock,http-slowloris-check,http-waf-detect,http-vuln* 192.168.1.10
+    
    ### subdomain enumeration
     gobuster vhost -u http://forge.htb -w /usr/share/seclists/Discovery/DNS/subdomains-top1million-110000.txt -t 50 -r 
    
