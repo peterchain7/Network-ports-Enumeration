@@ -6,6 +6,7 @@
 *all ports, UDP and TCP
 
     sudo masscan 147.182.194.236 -p0-65535,U:0-65535
+    sudo masscan 10.10.114.225 -p1-65535,U:1-65535 --rate=100 -e tun0 |tee masscan.port
     
 ### nmap commands
     nmap -p 22 -n -v -sV -Pn --script ssh-auth-methods --script-args ssh.user=root 192.168.1.10
