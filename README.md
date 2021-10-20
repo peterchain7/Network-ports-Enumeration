@@ -3,10 +3,16 @@
 
 
 ### NMAP General Port scanning
-*all ports, UDP and TCP
+* All ports, UDP and TCP
 
-    sudo masscan 147.182.194.236 -p0-65535,U:0-65535
-    sudo masscan 10.10.114.225 -p1-65535,U:1-65535 --rate=100 -e tun0 |tee masscan.port
+    sudo masscan 10.10.114.225 -p1-65535,U:1-65535 --rate=1000 -e tun0 |tee masscan.port
+    
+  How works
+  
+         -p1-65535,U:1-65535 tells masscan to scan all TCP/UDP ports
+         --rate=1000 scan rate = 1000 packets per second
+         -e tun0 tells masscan to listen on the VPN network interface for responses
+
     
 ### nmap commands
     nmap -p 22 -n -v -sV -Pn --script ssh-auth-methods --script-args ssh.user=root 192.168.1.10
