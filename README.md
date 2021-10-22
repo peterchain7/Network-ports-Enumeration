@@ -5,7 +5,7 @@
 ### NMAP General Port scanning
 * All ports, UDP and TCP
 
-    sudo masscan 10.10.114.225 -p1-65535,U:1-65535 --rate=1000 -e tun0 |tee masscan.port
+        sudo masscan 10.10.114.225 -p1-65535,U:1-65535 --rate=1000 -e tun0 |tee masscan.port
     
   How works
   
