@@ -94,6 +94,8 @@ Enumeration commands for Microsoft RPC service;
 ## Port 139/445
 Enumeration commands for Microsoft SMB service;
 
+     nmap -p 445 --script=smb-enum-shares.nse,smb-enum-users.nse 10.10.205.140
+     nmap -p 111 --script=nfs-ls,nfs-statfs,nfs-showmount 10.10.205.140
      nmap -n -v -sV -Pn -p 445 --script=smb-ls,smb-mbenum,smb-enum-shares,smb-enum-users,smb-os-discovery,smb-security-mode,smbv2-enabled,smbv2-enabled,smb-vuln*        192.168.1.10
     enum4linux -a 192.168.1.10
     rpcclient -U "" 192.168.1.10
