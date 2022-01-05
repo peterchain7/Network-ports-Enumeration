@@ -9,6 +9,7 @@
     
   How works
   
+ 
          -p1-65535,U:1-65535 tells masscan to scan all TCP/UDP ports
          --rate=1000 scan rate = 1000 packets per second
          -e tun0 tells masscan to listen on the VPN network interface for responses
@@ -78,7 +79,11 @@
     nmap -p 80 -n -v -sV -Pn --script http-backup-finder,http-config-backup,http-errors,http-headers,http-iis-webdav-vuln,http-internal-ip-disclosure,http-   methods,http-php-version,http-qnap-nas-info,http-robots.txt,http-shellshock,http-slowloris-check,http-waf-detect,http-vuln* 192.168.1.10
     
    ### subdomain enumeration
-    gobuster vhost -u http://forge.htb -w /usr/share/seclists/Discovery/DNS/subdomains-top1million-110000.txt -t 50 -r 
+    gobuster vhost -u http://forge.htb -w /usr/share/seclists/Discovery/DNS/subdomains-top1million-110000.txt -t 50 -r
+    
+   or
+    
+    wfuzz -c -f domains -w /usr/share/wordlists/dirb/common.txt -u "http://cybercrafted.thm" -H "Host: FUZZ.cybercrafted.thm" --sc 200,403
    
  ## Port 443
 In addition to the HTTP Enumeration commands, you can use the following SSL Scan command for HTTPs Service Enumeration;
