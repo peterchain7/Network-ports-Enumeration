@@ -84,6 +84,11 @@
    or
     
     wfuzz -c -f domains -w /usr/share/wordlists/dirb/common.txt -u "http://cybercrafted.thm" -H "Host: FUZZ.cybercrafted.thm" --sc 200,403
+    
+   or
+   
+    ffuf -H 'Host: FUZZ.http://admirertoo.htb/' -u http://10.129.97.152 -w /usr/share/seclists/Discovery/DNS/subdomains-top1million-110000.txt -fs 0
+
    
  ## Port 443
 In addition to the HTTP Enumeration commands, you can use the following SSL Scan command for HTTPs Service Enumeration;
