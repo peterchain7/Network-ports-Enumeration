@@ -89,6 +89,10 @@
    
     ffuf -H 'Host: FUZZ.forwardslash.htb' -u http://10.10.10.183 -w /usr/share/seclists/Discovery/DNS/subdomains-top1million-110000.txt -fs 0
    
+   OR 
+   
+    wfuzz -c -f subdomains.txt -w /usr/share/seclists/Discovery/DNS/subdomains-top1million-5000.txt -u "http://cmess.thm/" -H "Host: FUZZ.cmess.thm" --hl 107
+
  ## Port 443
 In addition to the HTTP Enumeration commands, you can use the following SSL Scan command for HTTPs Service Enumeration;
    
