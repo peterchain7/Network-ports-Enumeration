@@ -155,6 +155,7 @@ Enumeration commands for SNMP service;
     onesixtyone -c communities.txt 192.168.1.10
     snmp-check -t 192.168.1.10 -c public
     snmpwalk -c public -v 1 192.168.1.10 [MIB_TREE_VALUE]
+    snmpenum 10.10.11.136 public linux.txt 
     hydra -P passwords.txt -v 192.168.1.10 snmp
 
     #Communities.txt
