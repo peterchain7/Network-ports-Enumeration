@@ -1,5 +1,5 @@
-# Service-security-Testing
-
+# Network service Basic enumeration (Active Recon)
+## Be ethical please
 
 
 ### NMAP General Port scanning
@@ -18,11 +18,11 @@
      
    Using nmap after descovering ports..(feed the found ports to)
     
-        nmap -sV -p80,443,3306 10.10.10.x 
+        nmap -sV -sC -F -T4  -Pn -p80,443,3306 10.10.10.x 
 
     
 ### nmap commands
-    nmap -p 22 -n -v -sV -Pn --script ssh-auth-methods --script-args ssh.user=root 192.168.1.10
+    nmap -p 22 -n -v -sV  -sC -Pn --script ssh-auth-methods --script-args ssh.user=root 192.168.1.10
     nmap -p 22 -n -v -sV -Pn --script ssh-hostkey 192.168.1.10 
     nmap -p 22 -n -v -sV -Pn --script ssh-brute --script-args userdb=user_list.txt,passdb=password_list.txt 192.168.1.10
     
@@ -38,6 +38,7 @@
 ## port 21 
 ### nmap commands
     nmap --script=ftp-proftpd-backdoor,ftp-vsftpd-backdoor,ftp-anon,ftp-libopie,,ftp-vuln-cve2010-4221,tftp-enum -p 21 -n -v -sV -Pn 192.168.1.10
+    
 ### Metasploit Modules for FTP service;
     auxiliary/scanner/ftp/anonymous
     auxiliary/scanner/ftp/ftp_login
