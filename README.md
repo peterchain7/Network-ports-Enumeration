@@ -78,7 +78,10 @@
     auxiliary/scanner/smtp/smtp_ntlm_domain
     auxiliary/scanner/smtp/smtp_relay
     auxiliary/scanner/smtp/smtp_version 
-    
+
+
+
+# Web services
 ## port 80 
 ### Enumeratng port 80
   
@@ -112,6 +115,9 @@ OR
 In addition to the HTTP Enumeration commands, you can use the following SSL Scan command for HTTPs Service Enumeration;
    
     slscan https://192.168.1.10/
+    
+    
+    ##############################################################################3
  ##  Port 135
 Enumeration commands for Microsoft RPC service;
 
