@@ -4,7 +4,6 @@
 
 ### NMAP General Port scanning
 * All ports, UDP and TCP
-
         sudo masscan 10.10.114.225 -p1-65535,U:1-65535 --rate=1000 -e tun0 |tee masscan.port
     
   How works
@@ -26,7 +25,7 @@
     nmap -p 22 -n -v -sV -Pn --script ssh-hostkey 192.168.1.10 
     nmap -p 22 -n -v -sV -Pn --script ssh-brute --script-args userdb=user_list.txt,passdb=password_list.txt 192.168.1.10
    #### Nmap advanced clevest scan
-   ```` 
+   
      ipcalc 192.168.0.48  
      nmap -p 80 192.168.0.0/24 -oG nullbyte.txt
      
@@ -81,7 +80,8 @@
 
 
 
-# Web services
+# Web services  
+#####################################################################################
 ## port 80 
 ### Enumeratng port 80
   
@@ -92,7 +92,7 @@
     medusa -h 192.168.1.10 -u admin -P  wordlist.txt -M http -m DIR:/admin -T 10
     wfuzz -u http://10.13.37.11:5000/FUZZ -w /usr/share/wordlists/dirbuster/directory-list-2.3-medium.txt --hc 404
     nmap -p 80 -n -v -sV -Pn --script http-backup-finder,http-config-backup,http-errors,http-headers,http-iis-webdav-vuln,http-internal-ip-disclosure,http-   methods,http-php-version,http-qnap-nas-info,http-robots.txt,http-shellshock,http-slowloris-check,http-waf-detect,http-vuln* 192.168.1.10
-    
+    gobuster dir -u http://<address>/ -w /usr/share/seclists/Discovery/Web-Content/common.txt -k -s '200,204,301,302,307,403,500' -e -x txt,php,html
    ### subdomain enumeration
     gobuster vhost -u http://forge.htb -w /usr/share/seclists/Discovery/DNS/subdomains-top1million-110000.txt -t 50 -r
     
@@ -115,9 +115,27 @@ OR
 In addition to the HTTP Enumeration commands, you can use the following SSL Scan command for HTTPs Service Enumeration;
    
     slscan https://192.168.1.10/
+   ## Using curl command
+   * source https://infinitelogins.com/2020/07/10/enumerating-http-port-80/
+   
+  Pulling out internal/external links from source code.
+  
+           curl <address> -s -L | grep "title\|href" | sed -e 's/^[[:space:]]*//'
+
+To view just HTTP Links:
+
+      curl -s <address> | grep -Eo '(href|src)=".*"' | sed -r 's/(href|src)=//g' | tr -d '"' | sort
+
+Strip out the HTML code from source-code of webpage.
+
+      curl <address> -s -L | html2text -width '99' | uniq
+
+Check for contents of robots.txt.
+
+      curl <address>/robots.txt -s | html2text
+   
     
-    
-    ##############################################################################3
+#####################################################################################
  ##  Port 135
 Enumeration commands for Microsoft RPC service;
 
