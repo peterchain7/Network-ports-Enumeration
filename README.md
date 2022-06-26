@@ -25,6 +25,8 @@
     nmap -p 22 -n -v -sV  -sC -Pn --script ssh-auth-methods --script-args ssh.user=root 192.168.1.10
     nmap -p 22 -n -v -sV -Pn --script ssh-hostkey 192.168.1.10 
     nmap -p 22 -n -v -sV -Pn --script ssh-brute --script-args userdb=user_list.txt,passdb=password_list.txt 192.168.1.10
+    nmap -p- --min-rate=10000 --max-rate=11000 -v -oN open_nmap -n --open 10.10.11.166
+    
    #### Nmap advanced clevest scan
    
      ipcalc 192.168.0.48  
