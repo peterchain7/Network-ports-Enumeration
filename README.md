@@ -96,6 +96,7 @@
     wfuzz -u http://10.13.37.11:5000/FUZZ -w /usr/share/wordlists/dirbuster/directory-list-2.3-medium.txt --hc 404
     nmap -p 80 -n -v -sV -Pn --script http-backup-finder,http-config-backup,http-errors,http-headers,http-iis-webdav-vuln,http-internal-ip-disclosure,http-   methods,http-php-version,http-qnap-nas-info,http-robots.txt,http-shellshock,http-slowloris-check,http-waf-detect,http-vuln* 192.168.1.10
     gobuster dir -u http://<address>/ -w /usr/share/seclists/Discovery/Web-Content/common.txt -k -s '200,204,301,302,307,403,500' -e -x txt,php,html
+    
    ### subdomain enumeration
     gobuster vhost -u http://forge.htb -w /usr/share/seclists/Discovery/DNS/subdomains-top1million-110000.txt -t 50 -r
     
@@ -163,9 +164,10 @@ Enumeration commands for Microsoft SMB service;
     smbclient //192.168.1.10/ipc$ -U administrator
     smbclient //192.168.1.10/admin$ -U administrator
     
- ### Accessing the SAMBA ervices
+ ### Accessing the SAMBA Services
+ 
  *Entering with smbclient in samba shares without passwd
- *ITDEPT name of share
+ `ITDEPT` name of share
                 
     smbclient --no-pass //192.168.236.11/ITDEPT
   ### Trick in  samba services 
