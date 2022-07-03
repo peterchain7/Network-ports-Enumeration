@@ -117,7 +117,8 @@ OR
  ## Port 443
 In addition to the HTTP Enumeration commands, you can use the following SSL Scan command for HTTPs Service Enumeration;
    
-    slscan https://192.168.1.10/
+    sslscan https://192.168.1.10/
+    
    ## Using curl command
    * source https://infinitelogins.com/2020/07/10/enumerating-http-port-80/
    
