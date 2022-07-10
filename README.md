@@ -81,7 +81,10 @@
     auxiliary/scanner/smtp/smtp_relay
     auxiliary/scanner/smtp/smtp_version 
     
-###  dig +nocmd  trick.htb axfr +noall +answer @trick.htb
+###  DNS ZONE Transfer 
+    
+     dig +nocmd  trick.htb axfr +noall +answer @trick.htb
+     dig axfr @10.10.11.166  trick.htb
 
 
 # Web services  
