@@ -80,7 +80,8 @@
     auxiliary/scanner/smtp/smtp_ntlm_domain
     auxiliary/scanner/smtp/smtp_relay
     auxiliary/scanner/smtp/smtp_version 
-
+    
+###  dig +nocmd  trick.htb axfr +noall +answer @trick.htb
 
 
 # Web services  
