@@ -47,7 +47,7 @@
     auxiliary/scanner/ssh/ssh_login_pubkey
     auxiliary/scanner/ssh/ssh_version
     
-## port 21 
+## port 21  (ftp)
 ### nmap commands
     nmap --script=ftp-proftpd-backdoor,ftp-vsftpd-backdoor,ftp-anon,ftp-libopie,,ftp-vuln-cve2010-4221,tftp-enum -p 21 -n -v -sV -Pn 192.168.1.10
     
@@ -57,7 +57,7 @@
     auxiliary/scanner/ftp/ftp_version
     auxiliary/scanner/ftp/konica_ftp_traversal
   
-  ## port 23
+  ## port 23 (TELNET)
   ### Nmap commands
     nmap -n -sV -Pn --script "*telnet* and safe" -p 23 <ip>
    ###  Getting telnet passwd
@@ -71,7 +71,7 @@
 
 
  
-## port 25
+## port 25 (SMTP)
 ### nmap command
     nmap --script=smtp-enum-users,smtp-commands,smtp-vuln-cve2011-1720,smtp-vuln-cve2011-1764,smtp-vuln-cve2010-4344 -p 25 -n -v -sV -Pn 192.168.1.10
  
@@ -80,16 +80,23 @@
     auxiliary/scanner/smtp/smtp_ntlm_domain
     auxiliary/scanner/smtp/smtp_relay
     auxiliary/scanner/smtp/smtp_version 
-    
+
+## port 53 (DNS)
+
+
 ###  DNS ZONE Transfer 
     
      dig +nocmd  trick.htb axfr +noall +answer @trick.htb
      dig axfr @10.10.11.166  trick.htb
-
+     
+1. `+nocmd` – Removes the +cmd options output.<br>
+ 2. `+noall` – Removes extra headers, flags, time information, message size, etc.<br>
+ 3. `+answer` – Tells dig to return the answer section (the “juicy” part of the output).
 
 # Web services  
 #####################################################################################
-## port 80 
+
+## port 80 (HTTP)
 ### Enumeratng port 80
   
     nikto -h http://192.168.1.10/
@@ -145,14 +152,14 @@ Check for contents of robots.txt.
    
     
 #####################################################################################
- ##  Port 135
+ ##  Port 135 (RPC)
 Enumeration commands for Microsoft RPC service;
 
     nmap -n -v -sV -Pn -p 135 --script=msrpc-enum 192.168.1.10 
 ### Metasploit Exploit Module for Microsoft RPC service;
     exploit/windows/dcerpc/ms05_017_msmq
  
-## Port 139/445
+## Port 139/445  (SAMBA (NetBios/TCP))
 Enumeration commands for Microsoft SMB service;
 
      nmap -p 445 --script=smb-enum-shares.nse,smb-enum-users.nse 10.10.205.140
@@ -193,7 +200,7 @@ Enumeration commands for Microsoft SMB service;
     auxiliary/scanner/smb/smb_version
 
 
-## Port 161/162 - UDP
+## Port 161/162 - UDP (SNMP)
 
 Enumeration commands for SNMP service;
 
@@ -221,14 +228,14 @@ Enumeration commands for SNMP service;
     1.3.6.1.2.1.6.13.1.3 TCP Local Ports
     
     
-## Port 3306
+## Port 3306 (MYSQL)
 Enumeration commands for `MySQL` service;
 
        nmap -n -v -sV -Pn -p 3306 --script=mysql-info,mysql-audit,mysql-enum,mysql-databases,mysql-dump-hashes,mysql-empty-password,mysql-users,mysql-query,mysql-variables,mysql-vuln-cve2012-2122 192.168.1.10
         mysql --host=192.168.1.10 -u root -p
         
         
- ## Port 3389
+ ## Port 3389  (RDP)
  
 Enumeration commands for Remote Desktop service;
 
