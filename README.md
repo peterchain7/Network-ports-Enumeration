@@ -59,7 +59,8 @@
     
 ### recursive download files in FTP server 
 
-    wget -m ftp://anonymous:1223@10.10.223.246 
+    wget -m ftp://anonymous:1223@10.10.223.246
+    wget -r ftp://anonymous:1223@10.10.223.246
     
   ## port 23 (TELNET)
   ### Nmap commands
