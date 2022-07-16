@@ -56,7 +56,11 @@
     auxiliary/scanner/ftp/ftp_login
     auxiliary/scanner/ftp/ftp_version
     auxiliary/scanner/ftp/konica_ftp_traversal
-  
+    
+### recursive download files in FTP server 
+
+    wget -m ftp://anonymous:1223@10.10.223.246 
+    
   ## port 23 (TELNET)
   ### Nmap commands
     nmap -n -sV -Pn --script "*telnet* and safe" -p 23 <ip>
