@@ -18,7 +18,8 @@
      
    Using nmap after descovering ports..(feed the found ports to)
     
-        nmap -sV -sC -F -T4  -Pn -p80,443,3306 10.10.10.x 
+        nmap -sV -sC -F -T4  -Pn -p80,443,3306 10.10.10.x
+        nmap -sS -p- -Pn ip -vv 
 
     
 ### nmap commands
