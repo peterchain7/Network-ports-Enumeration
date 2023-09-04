@@ -56,6 +56,9 @@
     User: Anonymous
     Pass: Anonymous
 
+    # For tftp
+    smtp-user-enum -M VRFY -U /root/sectools/SecLists/Usernames/Names/names.txt -t 10.11.1.111
+
 ## port 22 (ssh)
 ### Nmape commands
 ```bash
@@ -97,6 +100,8 @@
 ### nmap command
     nmap --script=smtp-enum-users,smtp-commands,smtp-vuln-cve2011-1720,smtp-vuln-cve2011-1764,smtp-vuln-cve2010-4344 -p 25 -n -v -sV -Pn 192.168.1.10
     nmap --open --script smtp-enum-users -sS -p 25 -sV $IP/24
+    smtp-user-enum -M VRFY -U /root/sectools/SecLists/Usernames/Names/names.txt -t 10.11.1.111
+
 
 ### Metasploit Modules for SMTP service;
     auxiliary/scanner/smtp/smtp_enum
@@ -132,6 +137,8 @@ ldapsearch -h <ip> -p <port> -x -s base
                -x: simple Authentication
                -s: scope (base, one, sub)
 ldapsearch -LLL -x -H ldap://<FQDN> -b '' -s base '(objectclass=*)'
+ldapsearch -h 10.11.1.111 -p 389 -x -b "dc=mywebsite,dc=com"
+
 ```
 
 #####################################################################################
@@ -189,6 +196,7 @@ In addition to the HTTP Enumeration commands, you can use the following SSL Scan
    
     sslscan https://192.168.1.10/
     nmap -sV --script ssl-enum-ciphers -p 443 <ip>
+    nmap -sV --script=ssl-heartbleed 192.168.101.8
    ## Using curl command
    * source https://infinitelogins.com/2020/07/10/enumerating-http-port-80/
    
@@ -224,21 +232,34 @@ Enumeration commands for Microsoft SMB service;
 nmap -v -p 139, 445 -oA SMB_Scan 10.11.1.0/24
 nmap -p 139, 445 --script smb* -oA smb_scan <ip>
 nmap -p 445 --script=smb-enum-shares.nse,smb-enum-users.nse 10.10.205.140
-nmap -n -v -sV -Pn -p 445 --script=smb-ls,smb-mbenum,smb-enum-shares,smb-enum-users,smb-os-discovery,smb-security-mode,smbv2-enabled,smbv2-enabled,smb-vuln*        192.168.1.10
+nmap -n -v -sV -Pn -p 445 --script=smb-ls,smb-mbenum,smb-enum-shares,smb-enum-users,smb-os-discovery,smb-security-mode,smbv2-enabled,smbv2-enabled,smb-vuln* 192.168.1.10
+nmap --script smb-enum-*,smb-vuln-*,smb-ls.nse,smb-mbenum.nse,smb-os-discovery.nse,smb-print-text.nse,smb-psexec.nse,smb-security-mode.nse,smb-server-stats.nse,smb-system-info.nse,smb-protocols -p 139,445 10.11.1.111
+
+nmap --script smb-enum-domains.nse,smb-enum-groups.nse,smb-enum-processes.nse,smb-enum-sessions.nse,smb-enum-shares.nse,smb-enum-users.nse,smb-ls.nse,smb-mbenum.nse,smb-os-discovery.nse,smb-print-text.nse,smb-psexec.nse,smb-security-mode.nse,smb-server-stats.nse,smb-system-info.nse,smb-vuln-conficker.nse,smb-vuln-cve2009-3103.nse,smb-vuln-ms06-025.nse,smb-vuln-ms07-029.nse,smb-vuln-ms08-067.nse,smb-vuln-ms10-054.nse,smb-vuln-ms10-061.nse,smb-vuln-regsvc-dos.nse -p 139,445 10.11.1.111
+
+ or
+nmap -script smb-* -p 139,445 <ip>
+
 enum4linux -a 192.168.1.10
 nmblookup -A <ip>
 nbtscan <ip>
 nbtscan -r 192.168.1.1/24
-rpcclient -U "" 192.168.1.10
-    >srvinfo
-    >enumdomusers
-    >getdompwinfo
+rpcclient -U "" 10.11.1.111
+	srvinfo
+	enumdomusers
+	getdompwinfo
+	querydominfo
+	netshareenum
+	netshareenumall
 
 smbclient -L 192.168.1.10
 smbclient \\\\192.168.1.10\\ipc$ -U administrator
 smbclient //192.168.1.10/ipc$ -U administrator
 smbclient //192.168.1.10/admin$ -U administrator
 crackmapexec smb -u users.txt -p passes.txt --local-auth 10.10.10.178 --continue-on-success
+winexe -U username //10.11.1.111 "cmd.exe" --system
+
+smbtree 10.11.1.111
 ```
     
  ### Accessing the SAMBA Services
@@ -281,6 +302,8 @@ snmp-check -t 192.168.1.10 -c public # -c <cummunity string>
 snmpwalk -c public -v 1 192.168.1.10 [MIB_TREE_VALUE]
 snmpenum 10.10.11.136 public linux.txt 
 hydra -P passwords.txt -v 192.168.1.10 snmp
+nmap -vv -sV -sU -Pn -p 161,162 --script=snmp-netstat,snmp-processes 10.11.1.111
+snmp-check 10.11.1.111 -c public|private|community
 
 #Communities.txt
 public
@@ -307,6 +330,18 @@ showmount -e <ip>
 mkdir /tmp/nfs
 mount -t nfs <ip>:<share> /tmp/nfs
 ```
+- More commands
+- 
+```bash
+rpcinfo -p 10.11.1.111
+rpcclient -U "" 10.11.1.111
+	srvinfo
+	enumdomusers
+	getdompwinfo
+	querydominfo
+	netshareenum
+	netshareenumall
+ ```
 
 ## Port 3306 (MYSQL)
 - Enumeration commands for `MySQL` service;
