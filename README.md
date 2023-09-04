@@ -23,12 +23,15 @@
         nmap -p- --min-rate=10000 --max-rate=11000 -v -oN open_nmap -n --open 10.10.11.166
     
    #### Nmap advanced clevest scan
-   
+   ```bash
      ipcalc 192.168.0.48  
      nmap -p 80 192.168.0.0/24 -oG nullbyte.txt
-     
+   ```  
      #filtering only open ports
+
+     ```bash
      cat nullbyte.txt | awk '/Up$/{print $2}' | cat >> targetIP.txt
+     ````
 
      # Scanning all ip addresses 
      nikto -h targetIP.txt
