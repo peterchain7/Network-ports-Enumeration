@@ -143,7 +143,7 @@ ldapsearch -h <ip> -p <port> -x -s base
                -s: scope (base, one, sub)
 ldapsearch -LLL -x -H ldap://<FQDN> -b '' -s base '(objectclass=*)'
 ldapsearch -h 10.11.1.111 -p 389 -x -b "dc=mywebsite,dc=com"
-nmap -sT -Pn -n --open IP -p389 --script ldap-rootds
+nmap -sT -Pn -n --open IP -p389 --script ldap-rootdse
 ```
 
 #####################################################################################
@@ -165,7 +165,7 @@ wfuzz -u http://10.13.37.11:5000/FUZZ -w /usr/share/wordlists/dirbuster/director
 nmap -p 80 -n -v -sV -Pn --script http-backup-finder,http-config-backup,http-errors,http-headers,http-iis-webdav-vuln,http-internal-ip-disclosure,http-methods,http-php-version,http-qnap-nas-info,http-robots.txt,http-shellshock,http-slowloris-check,http-waf-detect,http-vuln* 192.168.1.10
 gobuster dir -u http://<address>/ -w /usr/share/seclists/Discovery/Web-Content/common.txt -k -s '200,204,301,302,307,403,500' -e -x txt,php,html
 nmap -p 80 --script=http-backup-finder --script-args http-backup-finder.url=/web-serveur/ch11/index.php challenge01.root-me.org
-
+hydra -l <username> -P <wordlist> 10.10.46.122 http-post-form "/login:username=^USER^&password=^PASS^:F=incorrect" -V
 
 # Site running wordpress
 `WPSscan`
