@@ -74,6 +74,8 @@ sudo nmap -sVC -p- -vvv -iL nmap192Livehosts.txt -T4 | grep -iE "Discovered open
     nmap -p 22 --script ssh* -oA ssh_scan <ip>
     ssh-vulnkey <ip> key.pub
     ssh-keyscan <ip>
+    ssh user@IP
+    ssh -i id_rsa user@IPHERE 
 ```
 
 
