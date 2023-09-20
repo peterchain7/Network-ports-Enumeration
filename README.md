@@ -143,7 +143,7 @@ ldapsearch -h <ip> -p <port> -x -s base
                -s: scope (base, one, sub)
 ldapsearch -LLL -x -H ldap://<FQDN> -b '' -s base '(objectclass=*)'
 ldapsearch -h 10.11.1.111 -p 389 -x -b "dc=mywebsite,dc=com"
-
+nmap -sT -Pn -n --open IP -p389 --script ldap-rootds
 ```
 
 #####################################################################################
@@ -261,6 +261,7 @@ smbclient -L 192.168.1.10
 smbclient \\\\192.168.1.10\\ipc$ -U administrator
 smbclient //192.168.1.10/ipc$ -U administrator
 smbclient //192.168.1.10/admin$ -U administrator
+smbclient //<IPINHERE>/Users -U 'USER%<PASSWORD>'
 crackmapexec smb -u users.txt -p passes.txt --local-auth 10.10.10.178 --continue-on-success
 winexe -U username //10.11.1.111 "cmd.exe" --system
 
