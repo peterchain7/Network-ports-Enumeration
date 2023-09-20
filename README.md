@@ -38,7 +38,7 @@
 sudo nmap -sn -vvv IP/24 -oN nmap192.txt | grep -v "host down, received no-response" | grep -i "Nmap scan report for" |awk '{print $5}'
 ```
 
-     # Scanning all ip addresses 
+#### Scanning all ip addresses 
      nikto -h targetIP.txt
      nmap -il targetIP.txt
    
