@@ -35,7 +35,8 @@
 #### Scaning live hosts in subnet and saving only up and runging hosts
 
 ```bash
-sudo nmap -sn -vvv IP/24 -oN nmap192.txt | grep -v "host down, received no-response" | grep -i "Nmap scan report for" |awk '{print $5}'
+sudo nmap -sP -vvv IP/24 -oN nmap-192sub.txt | grep -v "host down, received no-response" | grep -iE "Nmap scan report for" | awk '{print $5}' | grep -i "192" | tee nmap192Livehosts.txt
+sudo nmap -sVC -p- -vvv -iL nmap192Livehosts.txt -T4 | grep -iE "Discovered open port"
 ```
 
 #### Scanning all ip addresses 
