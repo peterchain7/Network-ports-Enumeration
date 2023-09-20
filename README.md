@@ -33,7 +33,10 @@
      cat nullbyte.txt | awk '/Up$/{print $2}' | cat >> targetIP.txt
      ````
 #### Scaning live hosts in subnet and saving only up and runging hosts
+
+```bash
 sudo nmap -sn -vvv IP/24 -oN nmap192.txt | grep -v "host down, received no-response" | grep -i "Nmap scan report for" |awk '{print $5}'
+```
 
      # Scanning all ip addresses 
      nikto -h targetIP.txt
