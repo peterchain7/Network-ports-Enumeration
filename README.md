@@ -139,6 +139,7 @@ exploit
     john --wordlist=/usr/share/wordlists/rockyou.txt sshhash
 ```
 - Ref [Hacking article - PORT 22](https://www.hackingarticles.in/ssh-penetration-testing-port-22/)
+- Ref [Medium @oumasydney2000](https://medium.com/@oumasydney2000/ssh-penetration-testing-cd6570335743)
 
 
 ## port 23 (TELNET)
