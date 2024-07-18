@@ -253,6 +253,9 @@ hydra -l <username> -P <wordlist> 10.10.46.122 http-post-form "/login:username=^
 OR
 
     gobuster vhost -t 100 -k -w /usr/share/seclists/Discovery/DNS/subdomains-top1million-110000.txt -u http://artcorp.htb
+OR
+
+    gobuster vhost -w custom-wordlist.txt -u http://runner.htb  --append-domain
    
  ## Port 443
 In addition to the HTTP Enumeration commands, you can use the following SSL Scan command for HTTPs Service Enumeration;
