@@ -224,6 +224,14 @@ nmap -p 80 -n -v -sV -Pn --script http-backup-finder,http-config-backup,http-err
 gobuster dir -u http://<address>/ -w /usr/share/seclists/Discovery/Web-Content/common.txt -k -s '200,204,301,302,307,403,500' -e -x txt,php,html
 nmap -p 80 --script=http-backup-finder --script-args http-backup-finder.url=/web-serveur/ch11/index.php challenge01.root-me.org
 hydra -l <username> -P <wordlist> 10.10.46.122 http-post-form "/login:username=^USER^&password=^PASS^:F=incorrect" -V
+```
+# Find links in website
+```bash
+sudo apt install gospider
+gospider -s http://linkvortex.htb/ -u web -t 10
+curl -Ls URL |  grep -oP 'href="\K[^"]+'
+curl -f -L URL | grep -Eo '"(http|https)://[a-zA-Z0-9#~.*,/!?=+&_%:-]*"'
+```
 
 # Site running wordpress
 `WPSscan`
