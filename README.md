@@ -225,12 +225,16 @@ gobuster dir -u http://<address>/ -w /usr/share/seclists/Discovery/Web-Content/c
 nmap -p 80 --script=http-backup-finder --script-args http-backup-finder.url=/web-serveur/ch11/index.php challenge01.root-me.org
 hydra -l <username> -P <wordlist> 10.10.46.122 http-post-form "/login:username=^USER^&password=^PASS^:F=incorrect" -V
 ```
-# Find links in website
+# Find urls links in website
 ```bash
-sudo apt install gospider
+sudo apt install gospider -y
 gospider -s http://linkvortex.htb/ -u web -t 10
 curl -Ls URL |  grep -oP 'href="\K[^"]+'
 curl -f -L URL | grep -Eo '"(http|https)://[a-zA-Z0-9#~.*,/!?=+&_%:-]*"'
+```
+# .Git Directory
+```bash
+wget -r -np -R "index.html*" -e robots=off http://dev.linkvortex.htb/.git/ # 403 use githacker or gittools => gitdumper
 ```
 
 # Site running wordpress
