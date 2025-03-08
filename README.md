@@ -3,14 +3,14 @@
 
 
 ### NMAP General Port scanning
+
 * All ports, UDP and TCP
 
         sudo masscan 10.10.114.225 -p1-65535,U:1-65535 --rate=1000 -e tun0 |tee masscan.port
     
   How works
   
- 
-         -p1-65535,U:1-65535 tells masscan to scan all TCP/UDP ports
+          -p1-65535,U:1-65535 tells masscan to scan all TCP/UDP ports
          --rate=1000 scan rate = 1000 packets per second
          -e tun0 tells masscan to listen on the VPN network interface for responses
          
@@ -22,7 +22,9 @@
         nmap -sS -p- -Pn ip -vv 
         nmap -p- --min-rate=10000 --max-rate=11000 -v -oN open_nmap -n --open 10.10.11.166
     
+
    #### Nmap advanced clevest scan
+
    ```bash
      ipcalc 192.168.0.48  
      nmap -p 80 192.168.0.0/24 -oG nullbyte.txt
@@ -41,6 +43,7 @@ sudo nmap -sVC -p- -vvv -iL nmap192Livehosts.txt -T4 | grep -iE "Discovered open
 ```
 
 #### Scanning all ip addresses 
+
      nikto -h targetIP.txt
      nmap -il targetIP.txt
    
@@ -55,6 +58,7 @@ sudo nmap -sVC -p- -vvv -iL nmap192Livehosts.txt -T4 | grep -iE "Discovered open
     auxiliary/scanner/ssh/ssh_version
     
 ## port 21  (ftp)
+
 ### nmap commands
     nmap -p 21 --script ftp* <ip>  
     nmap --script=ftp-proftpd-backdoor,ftp-vsftpd-backdoor,ftp-anon,ftp-libopie,,ftp-vuln-cve2010-4221,tftp-enum -p 21 -n -v -sV -Pn 192.168.1.10
@@ -173,7 +177,6 @@ Ref [hacktricks.xyz pentesting-web-wordpress](https://book.hacktricks.xyz/networ
 
 ## port 53 (DNS)
 
-
 ###  DNS ZONE Transfer 
 
 ```bash   
@@ -190,6 +193,7 @@ host -1 test.com @ns1.test.com
 nslookup -> set type=any
          -> ls -d test.com
 dnsrecon -d TARGET -d /usr/share/wordlists/dnsmap.txt -t std
+./DNSExplorer.sh <domain.com>
 ```
 
 ## Port 389 (LDAP)
@@ -210,6 +214,7 @@ nmap -sT -Pn -n --open IP -p389 --script ldap-rootdse
 ## port 80 (HTTP)
 
 ### Enumeratng port 80
+
 ```bash 
 nikto -h http://192.168.1.10/
 nikto -host http://SERVER_IP/ -C all -output Apache.html -Format HTML 
@@ -225,24 +230,39 @@ gobuster dir -u http://<address>/ -w /usr/share/seclists/Discovery/Web-Content/c
 nmap -p 80 --script=http-backup-finder --script-args http-backup-finder.url=/web-serveur/ch11/index.php challenge01.root-me.org
 hydra -l <username> -P <wordlist> 10.10.46.122 http-post-form "/login:username=^USER^&password=^PASS^:F=incorrect" -V
 ```
+# Index of / found
+
+    wget --no-check-certificate -r -np -R "index.html*" -e robots=off https://domain.com/path_index_of # Disable certificate validation
+
 # Find urls links in website
+
 ```bash
 sudo apt install gospider -y
 gospider -s http://linkvortex.htb/ -u web -t 10
 curl -Ls URL |  grep -oP 'href="\K[^"]+'
 curl -f -L URL | grep -Eo '"(http|https)://[a-zA-Z0-9#~.*,/!?=+&_%:-]*"'
 ```
-# .Git Directory
+
+# .Git Directory Found in web
+
 ```bash
-wget -r -np -R "index.html*" -e robots=off http://dev.linkvortex.htb/.git/ # 403 use githacker or gittools => gitdumper
+wget -r -np -R "index.html*" -e robots=off http://dev.linkvortex.htb/.git/ # If 403, Then use githacker or gittools => gitdumper
+
+# Gittools
+## Dumping files from .git web dir # Bypass 403
+./Dumper/gitdumper.sh https://ideotwebsite/.git/ output_folder
+
+## Extracts a dumped .git dir
+./Extractot/extractor.sh source_folder_.git_inside /dest_output_folder
 ```
 
 # Site running wordpress
+
 `WPSscan`
 [Update] wpscan --update
-[Enum Plugins] wpscan --url <http://> --enumerate p
-[Enum Themes] wpscan --url <http://> --enumerate t
-[Enum Users] wpscan --url <http://> --enumerate u
+[Enum Plugins] wpscan --url <http://> --enumerate p --api-key=
+[Enum Themes] wpscan --url <http://> --enumerate t --api-key=
+[Enum Users] wpscan --url <http://> --enumerate u --api-key=
 [BF on Enum Users] wpscan --url <http://> --wordlist <pass.txt> --threads 50
 [BF on Admin] wpscan --url <http://> --wordlist <pass.txt> --username admin --threads 50
 ```
@@ -268,13 +288,20 @@ OR
 OR
 
     gobuster vhost -w custom-wordlist.txt -u http://runner.htb  --append-domain
-   
+
+
+OR
+
+    bash autosubrecon.sh <target>
+
  ## Port 443
+
 In addition to the HTTP Enumeration commands, you can use the following SSL Scan command for HTTPs Service Enumeration;
    
     sslscan https://192.168.1.10/
     nmap -sV --script ssl-enum-ciphers -p 443 <ip>
     nmap -sV --script=ssl-heartbleed 192.168.101.8
+
    ## Using curl command
    * source https://infinitelogins.com/2020/07/10/enumerating-http-port-80/
    
@@ -296,6 +323,7 @@ Check for contents of robots.txt.
    
     
 #####################################################################################
+
  ##  Port 135 (RPC)
 Enumeration commands for Microsoft RPC service;
 
