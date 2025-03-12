@@ -11,3 +11,9 @@ go install -v github.com/projectdiscovery/httpx/cmd/httpx@latest
 go install github.com/jaeles-project/gospider@latest
 go install github.com/tomnomnom/unfurl@latest
 ```
+
+In DSNexplorer
+# sudo apt-get install bc jq parallel -y
+
+in autosubs
+- check if file exists and if not.. other actions to be done. {it pops errors}
