@@ -1,5 +1,5 @@
 # Network service Basic enumeration (Active Recon)
-## Be ethical please
+## Be ethical
 
 
 ### NMAP General Port scanning
@@ -21,17 +21,21 @@
         nmap -sV -sC -F -T4  -Pn -p80,443,3306 10.10.10.x
         nmap -sS -p- -Pn ip -vv 
         nmap -p- --min-rate=10000 --max-rate=11000 -v -oN open_nmap -n --open 10.10.11.166
-    
+    Fast Nmap Scan without missing ports
+         
+        nmap -T4 -F <target> -> Fast scan with fewer ports   
+        nmap -T5 -p- <target> -> Full  scan with all ports and max speed
+        #T1-T5 Timing - For stealth use -T2-T3 
+
+
 
    #### Nmap advanced clevest scan
 
    ```bash
      ipcalc 192.168.0.48  
      nmap -p 80 192.168.0.0/24 -oG nullbyte.txt
-   ```  
-     #filtering only open ports
 
-     ```bash
+     #filtering only open ports
      cat nullbyte.txt | awk '/Up$/{print $2}' | cat >> targetIP.txt
      ````
 
