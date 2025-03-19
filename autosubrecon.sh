@@ -25,7 +25,14 @@ ascii_art='''
 '''
 echo -e "${RED} $ascii_art ${NC}"
 
-# Removes subs/ dir if available and create new
+
+### Check if a directory does not exist create new
+# if [ ! -d "subs/" ] 
+# then
+#     echo "[+] Creating subs/ Directory." 
+# 	mkdir -p subs/{active,passive,full}
+#     exit 9999 # die with error code 9999
+# fi
 rm -r subs/
 mkdir subs
 
@@ -49,7 +56,9 @@ check_tools() {
         echo -e "${YELLOW}[!] Attempting Installation"
         sudo apt update
 		sudo apt install golang massdns amass sublist3r assetfinder findomain -y
+		# For sublist3r
 		sudo apt-get install libreadline-gplv2-dev libncursesw5-dev libssl-dev libsqlite3-dev tk-dev libgdbm-dev libc6-dev libbz2-dev
+		pip3 install dnspython requests
         go install -v github.com/projectdiscovery/subfinder/v2/cmd/subfinder@latest
         go install github.com/d3mondev/puredns/v2@latest
         go install github.com/Josue87/gotator@latest
@@ -73,8 +82,9 @@ finish_work() {
     echo "[+] Combining subdomains and resolving them..."
     cat "subs/"* | sort -u > "subs/all_subs_filtered.txt"
     puredns resolve "subs/all_subs_filtered.txt" -r "wordlist/dns/resolvers-trusted.txt" -w "subs/all_subs_resolved.txt" --skip-wildcard-filter --skip-validation &> /dev/null
-    cat "subs/all_subs_resolved.txt" | httpx -random-agent -retries 2 --silent -o "subs/filtered_hosts.txt"  &> /dev/null
-    echo "[+] Thats it we are done with subdomain enumeration!"
+    echo "${YELLOW}[+] Saving  live hosts to subs/filtered_hosts.txt"
+	cat "subs/all_subs_resolved.txt" | httpx -random-agent -retries 2 --silent -o "subs/filtered_hosts.txt"  &> /dev/null
+    echo "${YELLOW}[+] Done with subdomain enumeration!"
 }
 
 
@@ -111,21 +121,25 @@ passive_recon() {
 	cat "subs/passive.txt" | sort -u > "subs/quick_passive.txt"
 	rm "subs/passive.txt"
 
-	echo  "[+] Using subfinder for passive subdomain enumeration "
+	echo  "${YELLOW}[+] Using subfinder for passive subdomain enumeration "
 	subfinder -d $target_domain --all --silent -o "subs/subfinder.txt" > /dev/null 2>&1 
     
-	echo "Enumerating subdomains using Sublist3r"
+	echo "${YELLOW}[+] Enumerating subdomains using Sublist3r"
  	sublist3r -d "$target_domain" -o "subs/sublist3r_Tool.txt" 2> /dev/null 
 
-	echo "Enumerating subdomains using amass"
+	echo "${YELLOW}[+] Enumerating subdomains using amass"
 	amass enum -passive -d "$target_domain" > "subs/amass_Tool.txt" 2>/dev/null
 
-	echo "Enumerating subdomains using Assetfinder"
+	echo "${YELLOW}[+] Enumerating subdomains using Assetfinder"
 	assetfinder "$target_domain" > "subs/assetfinder_Tool.txt" 2>/dev/null
 
-	echo "Enumerating subdomains using Findomain"
+	echo "${YELLOW}[+] Enumerating subdomains using Findomain"
 	findomain -t "$target_domain" -u "subs/findomain_Tool.txt" > /dev/null 2>&1
-    echo "[+] That's it, we are done with passive subdomain enumeration!"
+
+    echo "${YELLOW}[+] Enumerating subdomains using dnsdumpster"
+	curl -s -H "X-API-Key: xxxxxxxx" https://api.dnsdumpster.com/domain/$target_domain |grep -oP "(?<=\")[a-zA-Z0-9.-]+$target_domain" | sort -u > "subs/dnsdumpster_results.txt"
+	
+    echo "${YELLOW}[+] That's it, we are done with passive subdomain enumeration!"
 	finish_work
 }
 
