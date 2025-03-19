@@ -18,12 +18,12 @@ printf "
 
 echo -en "${YELLOW} [+] Enter Full domain: "
 read domain
-wget $domain | grep -io '<a href=['"'"'"][^"'"'"']*['"'"'"]' |sed -e 's/^<a href=["'"'"']//i' -e 's/["'"'"']$//i' | tee "out-url.txt" 
-curl "$domain" | tr '"' '\n' | tr "'" '\n' | grep -e '^https://' -e '^http://' -e'^//' | sort | uniq >> "out-url.txt" 
-curl -Ls "$domain" |  grep -oP 'href="\K[^"]+' | sort | uniq >> "out-url.txt" 
-curl -f -L "$domain" | grep -Eo '"(http|https)://[a-zA-Z0-9#~.*,/!?=+&_%:-]*"' | sort | uniq >> "out-url.txt" 
-cat "out-url.txt"|sort | uniq >> "out-urls.txt"
+wget $domain | grep -io '<a href=['"'"'"][^"'"'"']*['"'"'"]' |sed -e 's/^<a href=["'"'"']//i' -e 's/["'"'"']$//i' | tee "${domain}-url.txt" 
+curl "$domain" | tr '"' '\n' | tr "'" '\n' | grep -e '^https://' -e '^http://' -e'^//' | sort | uniq >> "${domain}-url.txt" 
+curl -Ls "$domain" |  grep -oP 'href="\K[^"]+' | sort | uniq >> "${domain}-url.txt" 
+curl -f -L "$domain" | grep -Eo '"(http|https)://[a-zA-Z0-9#~.*,/!?=+&_%:-]*"' | sort | uniq >> "${domain}-url.txt" 
+cat "${domain}-url.txt"|sort | uniq >> "${domain}-urls.txt"
 
 # subdomain
 echo -e "${YELLOW} [+] Subdomain enumeration started"
-curl -k -s "https://crt.sh/?q=$domain&output=json" | jq -r '.[] | "\(.name_value)\n\(.common_name)"' | sort -u >> "out-url.txt" 
+curl -k -s "https://crt.sh/?q=$domain&output=json" | jq -r '.[] | "\(.name_value)\n\(.common_name)"' | sort -u >> "${domain}-url.txt" 

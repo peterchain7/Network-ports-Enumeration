@@ -1,5 +1,5 @@
 # Network service Basic enumeration (Active Recon)
-## Be ethical
+## Be ethical please
 
 
 ### NMAP General Port scanning
@@ -10,9 +10,9 @@
     
   How works
   
-          -p1-65535,U:1-65535 tells masscan to scan all TCP/UDP ports
-         --rate=1000 scan rate = 1000 packets per second
-         -e tun0 tells masscan to listen on the VPN network interface for responses
+        -p1-65535,U:1-65535 tells masscan to scan all TCP/UDP ports
+        --rate=1000 scan rate = 1000 packets per second
+        -e tun0 tells masscan to listen on the VPN network interface for responses
          
      If you find masscan is missing ports, try lowering your scan rate to 200-300. This generally is caused by a low quality or low speed connection to the VPN.
      
@@ -21,21 +21,17 @@
         nmap -sV -sC -F -T4  -Pn -p80,443,3306 10.10.10.x
         nmap -sS -p- -Pn ip -vv 
         nmap -p- --min-rate=10000 --max-rate=11000 -v -oN open_nmap -n --open 10.10.11.166
-    Fast Nmap Scan without missing ports
-         
-        nmap -T4 -F <target> -> Fast scan with fewer ports   
-        nmap -T5 -p- <target> -> Full  scan with all ports and max speed
-        #T1-T5 Timing - For stealth use -T2-T3 
-
-
+    
 
    #### Nmap advanced clevest scan
 
    ```bash
      ipcalc 192.168.0.48  
      nmap -p 80 192.168.0.0/24 -oG nullbyte.txt
-
+   ```  
      #filtering only open ports
+
+     ```bash
      cat nullbyte.txt | awk '/Up$/{print $2}' | cat >> targetIP.txt
      ````
 
@@ -228,14 +224,11 @@ sqlmap -u http://192.168.1.10/ --crawl=5 --dbms=mysql
 cewl http://192.168.1.10/ -m 6 -w special_wordlist.txt
 cewl http://runner.htb/ | grep -v CeWL > custom-wordlist.tx # For creating custom wordlist
 medusa -h 192.168.1.10 -u admin -P  wordlist.txt -M http -m DIR:/admin -T 10
-hydra -l axel -P /usr/share/wordlists/rockyou.txt cat.htb http-get-form "/join.php:loginUsername=axel&loginPassword=^PASS^&loginForm=Login:Incorrect username or password" -I -t 54 -v
 wfuzz -u http://10.13.37.11:5000/FUZZ -w /usr/share/wordlists/dirbuster/directory-list-2.3-medium.txt --hc 404
 nmap -p 80 -n -v -sV -Pn --script http-backup-finder,http-config-backup,http-errors,http-headers,http-iis-webdav-vuln,http-internal-ip-disclosure,http-methods,http-php-version,http-qnap-nas-info,http-robots.txt,http-shellshock,http-slowloris-check,http-waf-detect,http-vuln* 192.168.1.10
 gobuster dir -u http://<address>/ -w /usr/share/seclists/Discovery/Web-Content/common.txt -k -s '200,204,301,302,307,403,500' -e -x txt,php,html
 nmap -p 80 --script=http-backup-finder --script-args http-backup-finder.url=/web-serveur/ch11/index.php challenge01.root-me.org
 hydra -l <username> -P <wordlist> 10.10.46.122 http-post-form "/login:username=^USER^&password=^PASS^:F=incorrect" -V
-dirsearch --url https://target.com/ -e .* --full-url -x 404 --crawl --random-agent
-
 ```
 # Index of / found
 

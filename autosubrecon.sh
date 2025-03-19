@@ -25,12 +25,13 @@ ascii_art='''
 '''
 echo -e "${RED} $ascii_art ${NC}"
 
+# Removes subs/ dir if available and create new
 rm -r subs/
-
 mkdir subs
 
+# Check if required tools are installed and install if not availlable.
 check_tools() {
-    local tools=("subfinder" "puredns" "gotator" "cero" "httpx" "gospider" "unfurl")
+    local tools=("subfinder" "puredns" "gotator" "cero" "httpx" "gospider" "unfurl" "massdns" "amass" "sublist3r" "assetfinder" "findomain")
     local missing_tools=()
     
     echo "[+] Checking for required tools..."
@@ -47,7 +48,8 @@ check_tools() {
 
         echo -e "${YELLOW}[!] Attempting Installation"
         sudo apt update
-    	sudo apt install golang -y
+		sudo apt install golang massdns amass sublist3r assetfinder findomain -y
+		sudo apt-get install libreadline-gplv2-dev libncursesw5-dev libssl-dev libsqlite3-dev tk-dev libgdbm-dev libc6-dev libbz2-dev
         go install -v github.com/projectdiscovery/subfinder/v2/cmd/subfinder@latest
         go install github.com/d3mondev/puredns/v2@latest
         go install github.com/Josue87/gotator@latest
@@ -55,7 +57,8 @@ check_tools() {
         go install -v github.com/projectdiscovery/httpx/cmd/httpx@latest
         go install github.com/jaeles-project/gospider@latest
         go install github.com/tomnomnom/unfurl@latest
-
+		
+         # Copy the go binaries to /usr/local/bin to make them available in path
         echo -e "${YELLOW}[!] Adding Installed binary to /usr/local/bin"
         sudo cp -r /home/$USER/go/bin/* /usr/local/bin
         exit 1
@@ -69,7 +72,7 @@ check_tools
 finish_work() {
     echo "[+] Combining subdomains and resolving them..."
     cat "subs/"* | sort -u > "subs/all_subs_filtered.txt"
-    puredns resolve "subs/all_subs_filtered.txt" -r "Wordlists/dns/valid_resolvers.txt" -w "subs/all_subs_resolved.txt" --skip-wildcard-filter --skip-validation &> /dev/null
+    puredns resolve "subs/all_subs_filtered.txt" -r "wordlist/dns/resolvers-trusted.txt" -w "subs/all_subs_resolved.txt" --skip-wildcard-filter --skip-validation &> /dev/null
     cat "subs/all_subs_resolved.txt" | httpx -random-agent -retries 2 --silent -o "subs/filtered_hosts.txt"  &> /dev/null
     echo "[+] Thats it we are done with subdomain enumeration!"
 }
@@ -109,8 +112,19 @@ passive_recon() {
 	rm "subs/passive.txt"
 
 	echo  "[+] Using subfinder for passive subdomain enumeration "
-	subfinder -d $target_domain --all --silent > "subs/subfinder.txt"
+	subfinder -d $target_domain --all --silent -o "subs/subfinder.txt" > /dev/null 2>&1 
     
+	echo "Enumerating subdomains using Sublist3r"
+ 	sublist3r -d "$target_domain" -o "subs/sublist3r_Tool.txt" 2> /dev/null 
+
+	echo "Enumerating subdomains using amass"
+	amass enum -passive -d "$target_domain" > "subs/amass_Tool.txt" 2>/dev/null
+
+	echo "Enumerating subdomains using Assetfinder"
+	assetfinder "$target_domain" > "subs/assetfinder_Tool.txt" 2>/dev/null
+
+	echo "Enumerating subdomains using Findomain"
+	findomain -t "$target_domain" -u "subs/findomain_Tool.txt" > /dev/null 2>&1
     echo "[+] That's it, we are done with passive subdomain enumeration!"
 	finish_work
 }
@@ -121,14 +135,17 @@ active_recon() {
     echo "[+] Start active subdomain enumeration!"
     
     echo  "[+] DNS Brute Forcing using puredns"
-	puredns bruteforce "Wordlists/dns/dns_2m.txt" "$target_domain" -r "Wordlists/dns/valid_resolvers.txt" -w "subs/dns_bf.txt" --skip-wildcard-filter --skip-validation &> /dev/null
+	puredns bruteforce "wordlist/brute/2m-subdomains.txt" "$target_domain" -r "wordlist/dns/resolvers-trusted.txt" -w "subs/dns_bf.txt" --skip-wildcard-filter --skip-validation &> /dev/null
 
 	echo  "[+] resolving brute forced subs...."
-	puredns resolve "subs/dns_bf.txt" -r "Wordlists/dns/valid_resolvers.txt" -w "subs/dns_bf_resolved.txt"  --skip-wildcard-filter --skip-validation &> /dev/null
+	puredns resolve "subs/dns_bf.txt" -r "wordlist/dns/resolvers-trusted.txt" -w "subs/dns_bf_resolved.txt"  --skip-wildcard-filter --skip-validation &> /dev/null
 
-	# Permutations using gotator
+	# Permutations using gotator - DNS wordlist generator
 	echo  "[+] Permutations using gotator"
-	gotator -sub "subs/dns_bf_resolved.txt" -perm "Wordlists/dns/dns_permutations_list.txt" -mindup -fast -silent | sort -u > "subs/permutations.txt"
+	gotator -sub "subs/dns_bf_resolved.txt" -perm "wordlist/dns/dns_permutations_list.txt" -depth 1 -numbers 5 -mindup -adv -md -fast -silent | sort -u > "subs/possible-permutations.txt"
+	# Validate valid subdomain
+	puredns resolve "subs/possible-permutations.txt" -r "wordlist/dns/resolvers-trusted.txt" -w "subs/permutations.txt" --skip-wildcard-filter --skip-validation &> /dev/null
+
 
 	# TLS probing using cero
 	echo  "[+] TLS probing using cero"
@@ -162,10 +179,10 @@ normal_recon() {
 
 	# 1. DNS Brute Forcing using puredns
 	echo  "[+] DNS Brute Forcing using puredns"
-	puredns bruteforce "Wordlists/dns/dns_2m.txt" "$target_domain" -r "Wordlists/dns/valid_resolvers.txt" -w "subs/dns_bf.txt" --skip-wildcard-filter --skip-validation &> /dev/null
+	puredns bruteforce "wordlist/brute/2m-subdomains.txt" "$target_domain" -r "wordlist/dns/resolvers-trusted.txt" -w "subs/dns_bf.txt" --skip-wildcard-filter --skip-validation &> /dev/null
 
 	echo  "[+] resolving brute forced subs...."
-	puredns resolve "subs/dns_bf.txt" -r "Wordlists/dns/valid_resolvers.txt" -w "subs/dns_bf_resolved.txt"  --skip-wildcard-filter --skip-validation &> /dev/null
+	puredns resolve "subs/dns_bf.txt" -r "wordlist/dns/resolvers-trusted.txt" -w "subs/dns_bf_resolved.txt"  --skip-wildcard-filter --skip-validation &> /dev/null
 
 	# 3. TLS probing using cero
 	echo  "[+] TLS probing using cero"
@@ -263,4 +280,4 @@ case $choice in
         ;;
 esac
 
-echo "[+] Finished."
+echo "[+] Finished:"
