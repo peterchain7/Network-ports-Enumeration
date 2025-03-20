@@ -82,9 +82,9 @@ finish_work() {
     echo "[+] Combining subdomains and resolving them..."
     cat "subs/"* | sort -u > "subs/all_subs_filtered.txt"
     puredns resolve "subs/all_subs_filtered.txt" -r "wordlist/dns/resolvers-trusted.txt" -w "subs/all_subs_resolved.txt" --skip-wildcard-filter --skip-validation &> /dev/null
-    echo "${YELLOW}[+] Saving  live hosts to subs/filtered_hosts.txt"
+    echo -e "${YELLOW}[+] Saving  live hosts to subs/filtered_hosts.txt"
 	cat "subs/all_subs_resolved.txt" | httpx -random-agent -retries 2 --silent -o "subs/filtered_hosts.txt"  &> /dev/null
-    echo "${YELLOW}[+] Done with subdomain enumeration!"
+    echo -e "${YELLOW}[+] Done with subdomain enumeration!"
 }
 
 
@@ -124,22 +124,22 @@ passive_recon() {
 	echo  "${YELLOW}[+] Using subfinder for passive subdomain enumeration "
 	subfinder -d $target_domain --all --silent -o "subs/subfinder.txt" > /dev/null 2>&1 
     
-	echo "${YELLOW}[+] Enumerating subdomains using Sublist3r"
+	echo -e "${YELLOW}[+] Enumerating subdomains using Sublist3r"
  	sublist3r -d "$target_domain" -o "subs/sublist3r_Tool.txt" 2> /dev/null 
 
-	echo "${YELLOW}[+] Enumerating subdomains using amass"
+	echo -e "${YELLOW}[+] Enumerating subdomains using amass"
 	amass enum -passive -d "$target_domain" > "subs/amass_Tool.txt" 2>/dev/null
 
-	echo "${YELLOW}[+] Enumerating subdomains using Assetfinder"
+	echo -e "${YELLOW}[+] Enumerating subdomains using Assetfinder"
 	assetfinder "$target_domain" > "subs/assetfinder_Tool.txt" 2>/dev/null
 
-	echo "${YELLOW}[+] Enumerating subdomains using Findomain"
+	echo -e "${YELLOW}[+] Enumerating subdomains using Findomain"
 	findomain -t "$target_domain" -u "subs/findomain_Tool.txt" > /dev/null 2>&1
 
-    echo "${YELLOW}[+] Enumerating subdomains using dnsdumpster"
+    echo -e "${YELLOW}[+] Enumerating subdomains using dnsdumpster"
 	curl -s -H "X-API-Key: xxxxxxxx" https://api.dnsdumpster.com/domain/$target_domain |grep -oP "(?<=\")[a-zA-Z0-9.-]+$target_domain" | sort -u > "subs/dnsdumpster_results.txt"
 	
-    echo "${YELLOW}[+] That's it, we are done with passive subdomain enumeration!"
+    echo -e "${YELLOW}[+] That's it, we are done with passive subdomain enumeration!"
 	finish_work
 }
 
