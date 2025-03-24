@@ -125,10 +125,11 @@ passive_recon() {
 	done
 
 	wait
-
+    
 	echo  "[+] Removing duplicates....."
 	echo  "[+] Saving to quick_passive.txt"
 
+    curl -k -s "https://crt.sh/?q=$target_domain&output=json" | jq -r '.[] | "\(.name_value)\n\(.common_name)"' | sort -u >> "subs/passive/passive-2-url.txt" 
 	cat "subs/passive/passive.txt" | sort -u > "subs/passive/quick_passive.txt"
 	rm "subs/passive/passive.txt"
 
