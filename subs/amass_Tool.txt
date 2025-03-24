@@ -1,3 +1,0 @@
-tanesco.co.tz (FQDN) --> ns_record --> ns2.eganet.go.tz (FQDN)
-tanesco.co.tz (FQDN) --> ns_record --> ns3.eganet.go.tz (FQDN)
-tanesco.co.tz (FQDN) --> ns_record --> ns1.eganet.go.tz (FQDN)
