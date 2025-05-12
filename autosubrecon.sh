@@ -1,5 +1,11 @@
 #!/bin/bash
 
+# Load .env file with API_KEY
+set -o allexport
+source .env
+set +o allexport
+
+
 # Set the target domain
 target_domain="$1"
 
@@ -133,7 +139,7 @@ passive_recon() {
 	cat "subs/passive/passive.txt" | sort -u > "subs/passive/quick_passive.txt"
 	rm "subs/passive/passive.txt"
 
-	echo  "${YELLOW}[+] Using subfinder for passive subdomain enumeration "
+	echo -e "${YELLOW}[+] Using subfinder for passive subdomain enumeration "
 	subfinder -d $target_domain --all --silent -o "subs/passive/subfinder.txt" > /dev/null 2>&1 
     
 	echo -e "${YELLOW}[+] Enumerating subdomains using Sublist3r"
@@ -153,7 +159,7 @@ passive_recon() {
 	cero "$target_domain" | sed 's/^*.//' | grep  "\." | sort -u |  grep ".$target_domain$" > "subs/passive/tls_probing.txt"
 
     echo -e "${YELLOW}[+] Enumerating subdomains using dnsdumpster"
-	curl -s -H "X-API-Key: xxxxxxxx" https://api.dnsdumpster.com/domain/$target_domain |grep -oP "(?<=\")[a-zA-Z0-9.-]+$target_domain" | sort -u > "subs/passive/dnsdumpster_results.txt"
+	curl -s -H "X-API-Key: $API_KEY" https://api.dnsdumpster.com/domain/$target_domain |grep -oP "(?<=\")[a-zA-Z0-9.-]+$target_domain" | sort -u > "subs/passive/dnsdumpster_results.txt"
 	
     echo -e "${YELLOW}[+] That's it, we are done with passive subdomain enumeration!"
 	finish_passive
